@@ -5,7 +5,7 @@
     <img src="https://user-images.githubusercontent.com/19743841/51781628-8a278900-215e-11e9-9290-eb4b4a097023.png">
   </p>
   <p>
-    Python3 Development Environment on Docker Container with Docker Tutorial
+    Python3 Development Environment on Docker Container
   </p>
   <p>    
     <a href="https://twitter.com/home?status=Python%20Docker%20Development%20Environment%20by%20%40resotto3%20https://github.com/resotto/python3-docker-devenv"><img src="https://img.shields.io/badge/twitter-tweet-blue.svg"/></a>
