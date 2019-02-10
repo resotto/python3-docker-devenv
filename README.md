@@ -5,10 +5,20 @@
     <img src="https://user-images.githubusercontent.com/19743841/51781628-8a278900-215e-11e9-9290-eb4b4a097023.png">
   </p>
   <p>
+    Python3 Development Environment on Docker Container with Docker Tutorial
+  </p>
+  <p>    
     <a href="https://twitter.com/home?status=Python%20Docker%20Development%20Environment%20by%20%40resotto3%20https://github.com/resotto/python3-docker-devenv"><img src="https://img.shields.io/badge/twitter-tweet-blue.svg"/></a>
     <a href="https://twitter.com/resotto3"><img src="https://img.shields.io/badge/feedback-@resotto3-blue.svg" /></a>
   </p>
 </div>
+
+## Quick Start
+Please run only 2 commands below:
+```
+$ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
+$ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-python3:0.0.1
+```
 
 ## Index
 * [Why Python on Docker Container?](#why-python-on-docker-container)
@@ -42,13 +52,6 @@ You need not to create virtual environments with `venv` because you can handle t
 ## Prerequisites
 * [git](https://git-scm.com/downloads)
 * [Docker](https://www.docker.com/get-started)
-
-## Quick Start
-Please run only 2 commands below:
-```
-$ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
-$ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-python3:0.0.1
-```
 
 ## Usage
 Firstly, you need to clone this repository and go into the directory.  
