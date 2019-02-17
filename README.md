@@ -13,7 +13,7 @@
   </p>
 </div>
 
-## Quick Start
+## Getting Started
 Please run only 2 commands below:
 ```
 $ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
@@ -26,7 +26,7 @@ $ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-pyth
 * [What You Can Learn with This Repository](#what-you-can-learn-with-this-repository)
 * [Installed Software Version Details](#installed-software-version-details)
 * [Prerequisites](#prerequisites)
-* [Quick Start](#quick-start)
+* [Getting Started](#quick-start)
 * [Usage](#usage)
 * [How to Use Docker Commands](#how-to-use-docker-commands)
 * [How to Configure Dockerfile](#how-to-configure-dockerfile)
@@ -129,15 +129,31 @@ like this when you want to remove all containers.
 $ docker rm $(docker stop $(docker ps -aq))
 ```
 
+You can check settings of the container with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/).
+```
+$ docker inspect ${CONTAINER_NAME}
+```
+
 You can resume the stopped container.  
-[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts the container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in the container. Each commands require one argument, container name.
+[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts the container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in the container.
+Each commands require one argument, container name.
 ```
 $ docker start ubuntu-python3
 $ docker exec -it ubuntu-python3 /bin/bash
 ```
 
+If you want only to create a container without starting it, you can use [`docker create`](https://docs.docker.com/engine/reference/commandline/create/). You can use similar options with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/).  
+```
+$ docker create --name ${CONTAINER_NAME}
+```
+
 You can escape from the container with typing `exit` or `ctrl + d`.  
-You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/) in order to stop container, which requires container name.
+When you escape from the container, it also exits in case you ran it with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/), while it remains up in case you ran it with [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
+
+Actually, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is equivalent to [`docker create`](https://docs.docker.com/engine/reference/commandline/create/) + [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) + [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), but not equal to as discussed above.
+
+You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/) in order to stop container, which requires container name.  
+Additionally, you can release the port you allocated to the container with [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/).
 ```
 $ docker stop ubuntu-python3
 ```
