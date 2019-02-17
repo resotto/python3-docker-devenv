@@ -34,7 +34,7 @@ $ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-pyth
 * [Optional](#optional)
 
 ## Why Python on Docker Container?
-You need not to create virtual environments with `venv` because you can handle them respectively as a container.
+You don't have to create virtual environments with `venv` because you can handle them respectively as a container.
 
 ## Who Is This Repository Designed for?
 * A developer who feels that [Docker Tutorial](https://docs.docker.com/get-started/) may be too difficult to understand.
@@ -54,13 +54,13 @@ You need not to create virtual environments with `venv` because you can handle t
 * [Docker](https://www.docker.com/get-started)
 
 ## Usage
-Firstly, you need to clone this repository and go into the directory.  
+First of all, you need to clone this repository and go into the directory.  
 ```
 $ git clone git@github.com:resotto/python3-docker-devenv.git
 $ cd python3-docker-devenv
 ```
 
-Secondly, [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) creates image from Dockerfile and
+Next, [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) creates image from Dockerfile and
 [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) starts new container from image.
 ```
 $ docker build -t ubuntu-python3:0.0.1 .
@@ -69,22 +69,22 @@ Hello python3-docker-devenv!
 ```
 
 These commands syntax are below:
-* [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) -t ${NAME:TAG} ${Build Context}
-* [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -it ${IMAGE NAME} ${COMMAND}
+* [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) -t ${NAME:TAG} ${BUILD_CONTEXT}
+* [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -it ${IMAGE_NAME} ${COMMAND}
 
 <details><summary>What is Build Context?</summary><div>
 Build Context is just a set of local file or directories which can be referenced from [`ADD`](https://docs.docker.com/engine/reference/builder/#add) or [`COPY`](https://docs.docker.com/engine/reference/builder/#copy) in Dockerfile. Usually, it is specified as directory path.  
 Build Context is sent to Docker Daemon as part of build process.  
 You can specify Dockerfile path in Build Context with [`docker build -f ${PATH}`](https://docs.docker.com/engine/reference/commandline/build/), **but if not, Docker looks for Dockerfile in the root of Build Context**.</div></details><br>
 
-If you confirmed *"Hello python3-docker-devenv!"*, congratulation! You can develop in this container.  
+If you confirmed *"Hello python3-docker-devenv!"*, congratulation! You can develop on this container.  
 
 In order to save contents in the container, create Data Container in advance.<br>  
 
 <details><summary>What is Data Container?</summary><div>
 Data Container only aims to share data with other containers.
 The advantage of creating Data Container is that we can load Docker Volume NameSpace
-with `--volumes-from ${DATA CONTAINER NAME}` easily, which is [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) command option.</div></details><br>
+with `--volumes-from ${DATA_CONTAINER_NAME}` easily, which is [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) command option.</div></details><br>
 
 ```
 $ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
@@ -92,12 +92,12 @@ Data-only container for python3
 ```
 
 This command syntax is below:
-* [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -v ${VOLUME DIRECTORY} --name ${CONTAINER NAME} ${IMAGE NAME} ${COMMAND}
+* [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -v ${VOLUME_DIRECTORY} --name ${CONTAINER_NAME} ${IMAGE_NAME} ${COMMAND}
 
-Specifying `-v ${VOLUME DIRECTORY}` is very important to create Docker Volume. If don't, Docker Volume is not created.  
-`${VOLUME DIRECTORY}` is just a directory in the container and the files in it are
+Specifying `-v ${VOLUME_DIRECTORY}` is very important to create Docker Volume. If don't, Docker Volume is not created.  
+`${VOLUME_DIRECTORY}` is just a directory in the container and the files in it are
 copied to a Docker Volume.  
-Thus, you work on this directory in order to save files.
+Thus, you work in this directory in order to save files.
 
 After creating Data Container, this container stops. However, it is possible for
 it to be stopped and it should be so.
@@ -129,15 +129,15 @@ like this when you want to remove all containers.
 $ docker rm $(docker stop $(docker ps -aq))
 ```
 
-You can resume the container which is stopped now.  
-[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts the container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in the container. Each commands require one argument which is container name.
+You can resume the stopped container.  
+[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts the container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in the container. Each commands require one argument, container name.
 ```
 $ docker start ubuntu-python3
 $ docker exec -it ubuntu-python3 /bin/bash
 ```
 
-You can escape from the container with `exit` or `ctrl + d`.  
-You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/), which requires container name and stops the container.
+You can escape from the container with typing `exit` or `ctrl + d`.  
+You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/) in order to stop container, which requires container name.
 ```
 $ docker stop ubuntu-python3
 ```
@@ -151,10 +151,18 @@ $ docker rm ubuntu-python3
 So you can confirm volume status with [`docker volume ls`](https://docs.docker.com/engine/reference/commandline/volume_ls/) and remove it with [`docker volume rm`](https://docs.docker.com/engine/reference/commandline/volume_rm/).
 ```
 $ docker volume ls
-$ docker volume rm ${VOLUME NAME}
+$ docker volume rm ${VOLUME_NAME}
 ```
 
-Besides above, there are many Docker commands, so please check [docker](https://docs.docker.com/engine/reference/commandline/docker/).
+After running container, you may want to share files between host and the container.  
+Then, you can use [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/).
+This command enables us to share files from host to container, and also from container to host.
+```
+$ docker cp ${SRC_DIR} ${CONTAINER_NAME}:${DEST_DIR}
+$ docker cp ${CONTAINER_NAME}:${SRC_DIR} ${DEST_DIR}
+```
+
+Besides above, there are many Docker commands, so please check [docker reference](https://docs.docker.com/engine/reference/commandline/docker/).
 
 ## How to Configure Dockerfile
 ### What is Dockerfile?
@@ -169,14 +177,14 @@ This specifies Docker Image with format `IMAGE[:TAG]`.
 
 
 #### [`WORKDIR`](https://docs.docker.com/engine/reference/builder/#workdir)
- - This specifies working directory where orders are executed, such as [`COPY`](https://docs.docker.com/engine/reference/builder/#copy) and [`RUN`](https://docs.docker.com/engine/reference/builder/#run) etc... You also can specify relative path and use this order many times in Dockerfile.
+ - This specifies working directory where orders are executed, such as [`COPY`](https://docs.docker.com/engine/reference/builder/#copy) or [`RUN`](https://docs.docker.com/engine/reference/builder/#run) etc... You also can specify relative path and use this order many times in Dockerfile.
 
 
 #### [`COPY`](https://docs.docker.com/engine/reference/builder/#copy)
 - This order copies file from build context to image. The format is `COPY src dest`. You cannot specify `src` which is out of Build Context.
 
 #### [`RUN`](https://docs.docker.com/engine/reference/builder/#run)
-- This order takes one argument, which is a command, executes it and commit the result.
+- This order takes one argument, which is a command, executes it and commits the result.
 
 Besides above, there are many Dockerfile orders, so please check [Dockerfile reference](https://docs.docker.com/engine/reference/builder/).
 
