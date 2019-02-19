@@ -597,3 +597,4 @@ $ python3 gru_sin_tensorflow.py
 ```
 
 After learning models, if this kind of figure is displayed, cool!
+<img width="639" alt="2019-02-20 8 47 43" src="https://user-images.githubusercontent.com/19743841/53055925-d9a66e00-34ec-11e9-8c28-f93eea9b71e9.png">
