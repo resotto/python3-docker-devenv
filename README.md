@@ -32,6 +32,7 @@ $ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-pyth
 * [How to Configure Dockerfile](#how-to-configure-dockerfile)
 * [Why Does Quick Start Work?](#why-does-quick-start-work)
 * [Optional](#optional)
+* [Deep Learning](#deep-learning)
 
 ## Why Python on Docker Container?
 You don't have to create virtual environments with `venv` because you can handle them respectively as a container.
@@ -69,13 +70,17 @@ Hello python3-docker-devenv!
 ```
 
 These commands syntax are below:
-* [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) -t ${NAME:TAG} ${BUILD_CONTEXT}
+* [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) -t ${NAME}:${TAG} ${BUILD_CONTEXT}
 * [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -it ${IMAGE_NAME} ${COMMAND}
 
 <details><summary>What is Build Context?</summary><div>
 Build Context is just a set of local file or directories which can be referenced from [`ADD`](https://docs.docker.com/engine/reference/builder/#add) or [`COPY`](https://docs.docker.com/engine/reference/builder/#copy) in Dockerfile. Usually, it is specified as directory path.  
 Build Context is sent to Docker Daemon as part of build process.  
 You can specify Dockerfile path in Build Context with [`docker build -f ${PATH}`](https://docs.docker.com/engine/reference/commandline/build/), **but if not, Docker looks for Dockerfile in the root of Build Context**.</div></details><br>
+
+`-t` option with [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) means specifying image name and optionally a tag in the `NAME[:TAG]` format.
+
+`-it` options are coupled with `-i (--interactive)` option and `-t (--tty)` option. `-i` option means keeping STDIN open even if not attached, and `-t` option means allocating a pseudo-TTY, so that you can use shell(Bash) inside a container.
 
 If you confirmed *"Hello python3-docker-devenv!"*, congratulation! You can develop on this container.  
 
@@ -150,7 +155,7 @@ $ docker create --name ${CONTAINER_NAME}
 You can escape from the container with typing `exit` or `ctrl + d`.  
 When you escape from the container, it also exits in case you ran it with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/), while it remains up in case you ran it with [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
 
-Actually, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is equivalent to [`docker create`](https://docs.docker.com/engine/reference/commandline/create/) + [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) + [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), but not equal to as discussed above.
+Actually, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is equivalent to [`docker create`](https://docs.docker.com/engine/reference/commandline/create/) + [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) + [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), but not equal to as the difference between [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
 
 You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/) in order to stop container, which requires container name.  
 Additionally, you can release the port you allocated to the container with [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/).
@@ -188,7 +193,7 @@ There are some orders in Dockerfile.
 ### Orders of Dockerfile
 #### [`FROM`](https://docs.docker.com/engine/reference/builder/#from)  
 - [`FROM`](https://docs.docker.com/engine/reference/builder/#from) **must be the first order in Dockerfile**.  
-This specifies Docker Image with format `IMAGE[:TAG]`.  
+This specifies Docker Image with format `NAME[:TAG]`.  
  If `TAG` is omitted, it will be `latest`, but **`latest` cannot be recommended because the version of the tag may change in the future**.
 
 
@@ -235,9 +240,9 @@ On the other hand, original image such as [`resotto/ubuntu-python3:0.0.1`](https
 Thus, you can judge whether it is official image or not, due to its format. For example, [`resotto/ubuntu-python3:0.0.1`](https://cloud.docker.com/u/resotto/repository/docker/resotto/ubuntu-python3) has `USERNAME` "resotto" so this is uploaded by the user, not official image.
 
 By the way, how was it uploaded to Docker Hub?  
-You need follow 4 steps in order to upload image to Docker Hub:
+You need to follow 4 steps in order to upload image to Docker Hub:
 1. Signup [Docker Hub](https://hub.docker.com/signup).
-2. Login Docker Hub
+2. Login Docker Hub.
 3. Tag image as appropriate Repository name.
 4. Push the image to Docker Hub.
 
@@ -464,3 +469,131 @@ They are installed with pip when you run [`docker build`](https://docs.docker.co
 Actually, you already have installed vim and this repository also has `.vimrc` which is copied to *"/root"* in the container. Thus you can use vim by default!  
 
 If you want to use other text editor, you can do same thing like this.
+
+## Deep Learning
+If you can run learning models on container and show matplotlib figure about the result, it will be very useful.  
+In order to implement this, you need to follow 5 steps below:
+1. Install X11 on your host machine.
+2. Configure settings for X11Forwarding.
+3. Expose 22 port for ssh.
+4. Install Tkinter and start ssh service.
+5. Connect to the container with X11Forwarding using ssh.
+
+### 1. Install X11 on your host machine
+By default, if you try to show a figure on a container, you can't. Using X11, you can show it on your host machine, not the container.  
+Please install X11 such as [XQuartz](https://www.xquartz.org/).
+
+### 2. Configure settings for X11Forwarding
+If you didn't pass through [Set up ssh](#set-up-ssh), please do it first in order to create private key in `~/.ssh/`.  
+After confirming private key exists in `~/.ssh/`, then you run following command:
+```
+$ echo -e Host deeplearning\\n"    "HostName 0.0.0.0\\n"    "Port 2222\\n"    "User root\\n"    "IdentityFile ~/.ssh/id_rsa\\n"    "ForwardX11Timeout 168h\\n"    "LogLevel DEBUG1\\n >> ~/.ssh/config
+```
+
+This command adds ssh settings into `~/.ssh/config`.
+* `Host` is `deeplearning`, which you can specify at `HostName` argument of ssh command.
+* `HostName` is `0.0.0.0`, which is container IPAddress by default.
+* `Port` is `2222`, which is your host machine's port used when you connect to the container with ssh.
+* `User` is `root`, which is the user when you connect to the container with ssh.
+* `IdentityFile` is `~/.ssh/id_rsa`, which is your private key used on your host machine.
+* `ForwardX11Timeout` is `168h`, which is duration which X11Forwarding is valid for. In some case, learning models may take some days. So it is specified as one week total hours.
+* `LogLevel` is `DEBUG1`, which is log level when you run ssh command. To get logs about X11Forwarding, it is specified as `DEBUG1`.
+
+### 3. Expose 22 port for ssh
+Then, expose 22 port of container so that you can connect to the container with ssh.
+In order to leave the container up after escaping from it, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is not used here.  
+```
+$ docker create -it --name deeplearning -p 2222:22 resotto/deeplearning:0.0.1
+$ docker start deeplearning
+$ docker exec -it deeplearning /bin/bash
+```
+
+When you run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/), you can expose port with `p` option, whose format is `${HOST_PORT}:${CONTAINER_PORT}`. When connecting to the container with ssh, you can specify `${IP_ADDRESS}:${HOST_PORT}` showed via [`docker ps`](https://docs.docker.com/engine/reference/commandline/ps/), so that you can connect to the container with ${CONTAINER_PORT}.
+
+**Don't forget to add options `-it` when you run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/)**. This is very important. If you did, container still would remain exited even if you run [`docker start`](https://docs.docker.com/engine/reference/commandline/start/).
+
+In fact, image `resotto/deeplearning:0.0.1` is already uploaded to [Docker Hub](https://hub.docker.com/signup). This image is different from the one used at [Getting Started](#getting-started), whose name is `resotto/ubuntu-python3:0.0.1`. This image is built by Dockerfile, which some orders are added to this repository's one.  
+Added orders are below:
+```
+# Deep Learning
+RUN apt-get install -y xorg
+RUN apt-get install -y openssh-server
+RUN pip3 install numpy
+RUN pip3 install matplotlib
+RUN pip3 install sklearn
+RUN pip3 install tensorflow
+RUN pip3 install keras
+RUN echo "root:root" | chpasswd
+RUN echo PermitRootLogin yes >> /etc/ssh/sshd_config
+RUN echo X11UseLocalhost no >> /etc/ssh/sshd_config
+```
+
+Some softwares are installed, and some settings are changed.
+* `xorg` is used for `X11Forwarding` on container.
+* `sshd` is installed via `openssh-server`, so that you can connect to the container with ssh.
+* `chpasswd` is used for changing specific user's password. If you run `echo "${USER}:${PASSWORD}"` and pipe it to `chpasswd`, the password of the user is registered. Root user's password is `root` here.
+* `/etc/ssh/sshd_config` is used for `sshd`. Via redirect, if `PermitRootLogoin yes` is added into sshd_config, you can connect to the container with root user, and if `X11UseLocalhost no` is added into it, forwarding X server should be bound to the wildcard IPAddress.  
+Please remember that container default IPAddress is [`0.0.0.0`](https://docs.docker.com/v17.09/engine/userguide/networking/default_network/binding/), which is wildcard IPAddress. So you can connect to the container with X11Forwarding.
+
+### 4. Install Tkinter and start ssh service
+After running [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), let's install Tkinter.
+```
+$ apt-get install -y python3-tk
+```
+
+This install will ask you about geographic area and city/region where you live.
+```
+Please select the geographic area in which you live. Subsequent configuration questions will narrow this down by presenting a list of cities, representing
+the time zones in which they are located.
+
+  1. Africa   3. Antarctica  5. Arctic Ocean  7. Atlantic Ocean  9. Indian Ocean    11. System V timezones  13. None of the above
+  2. America  4. Australia   6. Asia          8. Europe          10. Pacific Ocean  12. US
+Geographic area:
+
+Please select the city or region corresponding to your time zone.
+
+  1. Aden      11. Baku        21. Damascus          31. Hong Kong  41. Kashgar       51. Makassar      61. Pyongyang  71. Singapore      81. Ujung Pandang
+  2. Almaty    12. Bangkok     22. Dhaka             32. Hovd       42. Katmandu      52. Manila        62. Qatar      72. Srednekolymsk  82. Ulaanbaatar
+  3. Amman     13. Barnaul     23. Dili              33. Irkutsk    43. Khandyga      53. Muscat        63. Qostanay   73. Taipei         83. Urumqi
+  4. Anadyr    14. Beirut      24. Dubai             34. Istanbul   44. Kolkata       54. Nicosia       64. Qyzylorda  74. Tashkent       84. Ust-Nera
+  5. Aqtau     15. Bishkek     25. Dushanbe          35. Jakarta    45. Krasnoyarsk   55. Novokuznetsk  65. Rangoon    75. Tbilisi        85. Vientiane
+  6. Aqtobe    16. Brunei      26. Famagusta         36. Jayapura   46. Kuala Lumpur  56. Novosibirsk   66. Riyadh     76. Tehran         86. Vladivostok
+  7. Ashgabat  17. Chita       27. Gaza              37. Jerusalem  47. Kuching       57. Omsk          67. Sakhalin   77. Tel Aviv       87. Yakutsk
+  8. Atyrau    18. Choibalsan  28. Harbin            38. Kabul      48. Kuwait        58. Oral          68. Samarkand  78. Thimphu        88. Yangon
+  9. Baghdad   19. Chongqing   29. Hebron            39. Kamchatka  49. Macau         59. Phnom Penh    69. Seoul      79. Tokyo          89. Yekaterinburg
+  10. Bahrain  20. Colombo     30. Ho Chi Minh City  40. Karachi    50. Magadan       60. Pontianak     70. Shanghai   80. Tomsk          90. Yerevan
+Time zone:
+```
+
+Then, start ssh service in order to connect to this container with ssh.
+```
+$ service ssh start
+```
+
+If you forgot to do this, following message would be displayed when you connect to the container with ssh:
+```
+ssh_exchange_identification: Connection closed by remote host
+```
+
+### 5. Connect to the container with X11Forwarding using ssh
+At last, it is time for ssh.  
+First of all, open ssh-client which is capable of X11Forwarding. Here, let's assume using [XQuartz](https://www.xquartz.org/) terminal.
+
+And then, please connect to the container you configured above with ssh.
+```
+$ ssh deeplearning
+```
+
+You also can connect to the container with ssh explicitly:
+```
+$ ssh -Xv -p 2222 root@0.0.0.0
+```
+
+If you run container from image `resotto/deeplearning:0.0.1`, a python3 file, which operates learning and predicting Sine wave with TensorFlow GRU, is included in the container `/app`.  
+So let's try it:
+```
+$ cd /app/
+$ python3 gru_sin_tensorflow.py
+```
+
+After learning models, if this kind of figure is displayed, cool!
