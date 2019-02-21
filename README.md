@@ -226,8 +226,8 @@ What you did at [Getting Started](#getting-started) was just two things:
 1. Created Data Container.
 2. Created and ran container whose data is based on the Data Container.
 
-In step 1, when you did [`docker run ubuntu:18.04`]((https://docs.docker.com/engine/reference/commandline/run/), whose options are omitted here, Docker Daemon looks for the image from local first. If it isn't there, Docker Daemon tries to pull it from Registry, which is [Docker Hub](https://hub.docker.com/) by default.  
-So you just pulled [`ubuntu:18.04`]((https://hub.docker.com/_/ubuntu?tab=description) image from [Docker Hub](https://hub.docker.com/).
+In step 1, when you did [`docker run ubuntu:18.04`](https://docs.docker.com/engine/reference/commandline/run/), whose options are omitted here, Docker Daemon looks for the image from local first. If it isn't there, Docker Daemon tries to pull it from Registry, which is [Docker Hub](https://hub.docker.com/) by default.  
+So you just pulled [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) image from [Docker Hub](https://hub.docker.com/).
 
 <details><summary>What is Registry?</summary><div>
 Registry is just a service that hosts and distributes Docker Image.</div></details><br>
@@ -238,15 +238,15 @@ Although host OS usually starts Docker Daemon, you also can start it explicitly 
 </div></details><br>
 
 How about `resotto/ubuntu-python3:0.0.1` in step2? Was this pulled from Docker Hub too? Exactly. Actually it had already been pushed to and hosted by Docker Hub. You can check it at [this page](https://cloud.docker.com/u/resotto/repository/docker/resotto/ubuntu-python3)!  
-So what is the difference between `resotto/ubuntu-python3:0.0.1` and [`ubuntu:18.04`]((https://hub.docker.com/_/ubuntu?tab=description)?  
+So what is the difference between `resotto/ubuntu-python3:0.0.1` and [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description)?  
 To know this, let's learn Docker Repository first.
 
 <details><summary>What is Repository?</summary><div>
 When falling into Docker category, Repository means set of relative images. Usually, it offers various versions of the same application or service. In short, images belong to Repository.
 </div></details><br>
 
-While the format of [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) is `REPOSITORYNAME[:TAG]`, the format of the original image [`resotto/ubuntu-python3:0.0.1`](https://cloud.docker.com/u/resotto/repository/docker/resotto/ubuntu-python3) is `USERNAME/REPOSITORYNAME[:TAG]`. What is the `USERNAME` of [`ubuntu:18.04`]((https://hub.docker.com/_/ubuntu?tab=description)?  
-In fact, the ubuntu image [`ubuntu:18.04`]((https://hub.docker.com/_/ubuntu?tab=description) doesn't have `USERNAME`.
+While the format of [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) is `REPOSITORYNAME[:TAG]`, the format of the original image [`resotto/ubuntu-python3:0.0.1`](https://cloud.docker.com/u/resotto/repository/docker/resotto/ubuntu-python3) is `USERNAME/REPOSITORYNAME[:TAG]`. What is the `USERNAME` of [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description)?  
+In fact, the ubuntu image [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) doesn't have `USERNAME`.
 
 This is because the ubuntu image [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) belongs *"root"* namespace, which is managed by Docker Inc. *"root"* namespace is reserved for official images of prevailing softwares and distributions.  
 On the other hand, original image such as [`resotto/ubuntu-python3:0.0.1`](https://cloud.docker.com/u/resotto/repository/docker/resotto/ubuntu-python3) belongs *"user"* namespace. This type of image is what is uploaded to Docker Hub by users.
