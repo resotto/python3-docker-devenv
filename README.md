@@ -596,7 +596,7 @@ $ python3 gru_sin_tensorflow.py
 ```
 
 After learning models, if this kind of figure is displayed, awesome!
-<img width="641" alt="sine_wave_prediction" src="https://user-images.githubusercontent.com/19743841/53146478-a8f72f00-35e7-11e9-82e9-833ca9245935.png">
+<div align="center"><img width="638" alt="sine_wave_prediction_02" src="https://user-images.githubusercontent.com/19743841/53146520-dcd25480-35e7-11e9-97b2-3ba7afa91575.png"></div>
 
 ## References
 * [Docker Reference documentation](https://docs.docker.com/reference/)
