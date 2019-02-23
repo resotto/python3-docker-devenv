@@ -15,7 +15,7 @@
 
 ## Getting Started
 Please run only 2 commands below:
-```
+```bash
 $ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
 $ docker run -it --name ubuntu-python3 --volumes-from pydata resotto/ubuntu-python3:0.0.1
 ```
@@ -49,21 +49,20 @@ You don't have to create virtual environments because you can handle them respec
 ## Installed Software Version Details
 * ubuntu: 18.04.1 LTS
 * python: 3.6.7
-* git: 2.17.1
 
 ## Prerequisites
 * [git](https://git-scm.com/downloads)
 * [Docker](https://www.docker.com/get-started)
 
 ## Usage
-First of all, you need to clone this repository and go into the directory.  
-```
+First of all, you need to clone this repository and go into it.  
+```bash
 $ git clone git@github.com:resotto/python3-docker-devenv.git
 $ cd python3-docker-devenv
 ```
 
-Next, [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) creates Image from Dockerfile and
-[`docker run`](https://docs.docker.com/engine/reference/commandline/run/) starts new container from Image. About Dockerfile, see [What is Dockerfile?](#what-is-dockerfile).
+Next, [`docker build`](https://docs.docker.com/engine/reference/commandline/build/) creates an image from Dockerfile and
+[`docker run`](https://docs.docker.com/engine/reference/commandline/run/) starts new container from it. About Dockerfile, see [What is Dockerfile?](#what-is-dockerfile).
 
 
 <details><summary>What is Image?</summary><div>
@@ -71,7 +70,7 @@ Docker Image is composed of multi layers. Each layer is read-only file system. N
 If Image is converted to a container by [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) or [`docker create`](https://docs.docker.com/engine/reference/commandline/create/), Docker Engine adds read/write file system on the image and configures settings about IPAddress, name, id and resource limit etc... **So stopped container is not the same as Image**. It keeps environmental settings such as IPAddress, changed settings, meta-data and file system. They are not saved in Image.
 </div></details><br>
 
-```
+```bash
 $ docker build -t ubuntu-python3:0.0.1 .
 $ docker run -it ubuntu-python3:0.0.1 python3 hello.py
 Hello python3-docker-devenv!
@@ -99,7 +98,7 @@ Data Container only aims to share data with other containers.
 The advantage of creating Data Container is that we can load Docker Volume NameSpace
 with `--volumes-from ${DATA_CONTAINER_NAME}` easily, which is [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) command option.</div></details><br>
 
-```
+```bash
 $ docker run -v /app --name pydata ubuntu:18.04 echo "Data-only container for python3"
 Data-only container for python3
 ```
@@ -107,17 +106,17 @@ Data-only container for python3
 This command syntax is below:
 * [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) -v ${VOLUME_DIRECTORY} --name ${CONTAINER_NAME} ${NAME}:${TAG} ${COMMAND}
 
-Specifying `-v ${VOLUME_DIRECTORY}` is very important to create Docker Volume. If don't, Docker Volume is not created.  
+Specifying `-v ${VOLUME_DIRECTORY}` is very important to create Docker Volume. If don't, it is not created.  
 `${VOLUME_DIRECTORY}` is just a directory in the container and the files in it are
 copied to a Docker Volume.  
-Thus, you work in this directory in order to save files.
+Thus, you should work in this directory in order to save files.
 
-After creating Data Container, this container stops. However, it is possible for
+After creating Data Container, it stops. However, it is possible for
 it to be stopped and it should be so.
 
-Then, run following command and you will enter the container such as running
+Then, please run following command so that you can enter the container such as running
 ssh command.
-```
+```bash
 $ docker run -it --name ubuntu-python3 --volumes-from pydata ubuntu-python3:0.0.1
 ```
 
@@ -135,53 +134,53 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 ## How to Use Docker Commands
 If you want to confirm container status, you can run [`docker ps`](https://docs.docker.com/engine/reference/commandline/ps/). If specifying `a` option, you can retrieve all containers status, while retrieving only running containers with no option.
-```
+```bash
 $ docker ps -a
 ```
 
 If you specify `q` option, it returns only container ids, so that you can do something
 like this when you want to remove all containers.
-```
+```bash
 $ docker rm $(docker stop $(docker ps -aq))
 ```
 
 You can check settings of the container with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/).
-```
+```bash
 $ docker inspect ${CONTAINER_NAME}
 ```
 
 You can resume the stopped container.  
-[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts the container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in the container.
+[`docker start`](https://docs.docker.com/engine/reference/commandline/start/) starts container and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/) runs commands in container.
 Each command requires one argument, ${CONTAINER_NAME}.
-```
+```bash
 $ docker start ubuntu-python3
 $ docker exec -it ubuntu-python3 /bin/bash
 ```
 
-If you want only to create a container without starting it, you can run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/). You can run similar options with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/).  
-```
+If you want only to create a container without starting it, you can run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/). You can use similar options with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/).  
+```bash
 $ docker create --name ${CONTAINER_NAME}
 ```
 
-You can escape from the container with typing `exit` or `ctrl + d`.  
-When you escape from a container, it also exits in case you ran it with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/), while it remains up in case you ran it with [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
+You can escape from container with typing `exit` or `ctrl + d`.  
+When you escape from a container, **it also exits** in case you ran it with [`docker run`](https://docs.docker.com/engine/reference/commandline/run/), **while it remains up** in case you ran it with [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
 
-Actually, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is equivalent to [`docker create`](https://docs.docker.com/engine/reference/commandline/create/) + [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) + [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), but not equal to as the difference between [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
+Actually, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is equivalent to [`docker create`](https://docs.docker.com/engine/reference/commandline/create/) + [`docker start`](https://docs.docker.com/engine/reference/commandline/start/) + [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), but not equal to because of the difference between [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) and [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/).
 
 You also can run [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/) in order to stop container, which requires ${CONTAINER_NAME}.  
-Additionally, you can release host machine's port allocated to the container with [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/).
-```
+Additionally, you can release host machine's port allocated to container with [`docker stop`](https://docs.docker.com/engine/reference/commandline/stop/).
+```bash
 $ docker stop ubuntu-python3
 ```
 
 You can remove container with [`docker rm`](https://docs.docker.com/engine/reference/commandline/rm/) which requires ${CONTAINER_NAME}.
-```
+```bash
 $ docker rm ubuntu-python3
 ```
 
 **Even after removing container, docker volume still remains**.  
 So you can confirm volume status with [`docker volume ls`](https://docs.docker.com/engine/reference/commandline/volume_ls/) and remove it with [`docker volume rm`](https://docs.docker.com/engine/reference/commandline/volume_rm/).
-```
+```bash
 $ docker volume ls
 $ docker volume rm ${VOLUME_NAME}
 ```
@@ -189,7 +188,7 @@ $ docker volume rm ${VOLUME_NAME}
 After running a container, you may want to share files between host and the container.  
 Then, you can run [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/).
 This command enables us to share files from host to container, and also from container to host.
-```
+```bash
 $ docker cp ${SRC_DIR} ${CONTAINER_NAME}:${DEST_DIR}
 $ docker cp ${CONTAINER_NAME}:${SRC_DIR} ${DEST_DIR}
 ```
@@ -206,7 +205,7 @@ Here, let's pick up some of them.
 #### [`FROM`](https://docs.docker.com/engine/reference/builder/#from)  
 - [`FROM`](https://docs.docker.com/engine/reference/builder/#from) **must be the first order in Dockerfile**.  
 This specifies Docker Image with format `NAME[:TAG]`.
-If `TAG` is omitted, it will be `latest`, but **`latest` cannot be recommended because the version of this tag may change in the future**.
+If `TAG` is omitted, it will be `latest`, but **`latest` cannot be recommended because the version of `latest` is not always latest. It means just one of tags**.
 
 
 #### [`WORKDIR`](https://docs.docker.com/engine/reference/builder/#workdir)
@@ -224,10 +223,10 @@ Besides above, there are many Dockerfile orders, so please check [Dockerfile ref
 ## Why Does Getting Started Work?
 What you did at [Getting Started](#getting-started) was just two things:
 1. Created Data Container.
-2. Created and ran container whose data is based on the Data Container.
+2. Created and ran a container whose data is based on the Data Container.
 
-In step 1, when you did [`docker run ubuntu:18.04`](https://docs.docker.com/engine/reference/commandline/run/), whose options are omitted here, Docker Daemon looks for the image from local first. If it isn't there, Docker Daemon tries to pull it from Registry, which is [Docker Hub](https://hub.docker.com/) by default.  
-So you just pulled [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) image from [Docker Hub](https://hub.docker.com/).
+In step 1, when you did [`docker run ubuntu:18.04`](https://docs.docker.com/engine/reference/commandline/run/), whose options are omitted here, Docker Daemon looks for the image `ubuntu:18.04` from local first. If it isn't there, Docker Daemon tries to pull it from Registry, which is [Docker Hub](https://hub.docker.com/) by default.  
+So you just pulled [`ubuntu:18.04`](https://hub.docker.com/_/ubuntu?tab=description) from [Docker Hub](https://hub.docker.com/).
 
 <details><summary>What is Registry?</summary><div>
 Registry is just a service that hosts and distributes Docker Image.</div></details><br>
@@ -263,20 +262,16 @@ You need to follow 4 steps in order to upload image to Docker Hub:
 ### 1. Signup Docker Hub
 In order to host your original image, please signup [Docker Hub](https://hub.docker.com/signup) first.
 
-Click "Sign Up" in [Docker Hub](https://hub.docker.com/signup).
+###### Click "Sign Up" in [Docker Hub](https://hub.docker.com/signup).
 ![click-signup](https://user-images.githubusercontent.com/19743841/51794288-ca484380-2212-11e9-9e93-2b33e238ccce.png)
 
-And then, type your info into the form and click "Sign Up".
+###### Type your info into the form and click "Sign Up".
 ![type-your-info](https://user-images.githubusercontent.com/19743841/51794289-ca484380-2212-11e9-8bb6-2297dfe7510b.png)
 
 ### 2. Login Docker Hub
 Please run [`docker login`](https://docs.docker.com/engine/reference/commandline/login/) and then type your Docker ID and password.
-```
+```bash
 $ docker login
-Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
-Username: resotto
-Password:
-Login Succeeded
 ```
 
 If you have already succeeded at login, you don't have to do anything.
@@ -290,40 +285,24 @@ When you logout of your registry, you can run [`docker logout`](https://docs.doc
 
 ### 3. Tag image as appropriate Repository name
 If you passed through [Usage](#usage), do you remember building an image from Dockerfile as follows?
-```
+```bash
 $ docker build -t ubuntu-python3:0.0.1 .
 ```
 
-Undoubtedly, you built an image from Dockerfile, but simultaneously you also tagged the image as `ubuntu-python3:0.0.1`. This tag has no `USERNAME`, so let's tag image as the name including your Docker ID:
-```
+Undoubtedly, you built an image from Dockerfile, but simultaneously you also tagged the image as `ubuntu-python3:0.0.1`. This tag has no `USERNAME`, so please build an image again so that the tag of it will include your Docker ID:
+```bash
 $ docker build -t resotto/ubuntu-python3:0.0.1 .
 ```
 
-After tagging the image, run [`docker images`](https://docs.docker.com/engine/reference/commandline/images/) or [`docker image ls`](https://docs.docker.com/engine/reference/commandline/image_ls/) in order to confirm that the image exists.
-```
+After building the image, run [`docker images`](https://docs.docker.com/engine/reference/commandline/images/) or [`docker image ls`](https://docs.docker.com/engine/reference/commandline/image_ls/) in order to confirm that it exists.
+```bash
 $ docker images
 ```
 
 ### 4. Push the tagged image to Docker Hub
-After confirming that the image you tagged exists, let's push it to Docker Hub. Please run [`docker push`](https://docs.docker.com/engine/reference/commandline/push/).
-```
+After confirming that the image you tagged exists, please push it to Docker Hub with [`docker push`](https://docs.docker.com/engine/reference/commandline/push/).
+```bash
 $ docker push resotto/ubuntu-python3:0.0.1
-The push refers to repository [docker.io/resotto/ubuntu-python3]
-5ce5f63f24c0: Pushed
-d8d3b3e8a557: Pushed
-0e6f3b804d02: Pushed
-8b32fa684eea: Pushed
-327a00a42c3b: Pushed
-1c77a0c741d2: Pushed
-773f076615b0: Pushed
-75c251c8063a: Pushed
-c9d22d4a720c: Pushed
-37907c98853d: Pushed
-27a216ffe825: Mounted from library/ubuntu
-9e9d3c3a7458: Mounted from library/ubuntu
-7604c8714555: Mounted from library/ubuntu
-adcb570ae9ac: Mounted from library/ubuntu
-0.0.1: digest: sha256:893e46dffdde445500c05b6200b0af0771412c1a97c774ca17ade29f61b8b25e size: 3245
 ```
 
 If you omitted your username when running [`docker push`](https://docs.docker.com/engine/reference/commandline/push/), it would fail. Since *"root"* namespace is reserved for official images, you cannot push your original image there.
@@ -373,23 +352,23 @@ unauthorized: authentication required
 ## Optional
 ### Install and Configure git
 You already have installed git because it is specified in Dockerfile.
-So, let's configure it.
+So, please configure it.
 
 #### Set up git
-You should add your name and your email to git config.
-```
+You should add your name and your email to gitconfig.
+```bash
 $ git config --global user.email "you@example.com"
 $ git config --global user.name "Your Name"
 ```
 
-If you want to confirm git config parameters, please run [git config](https://git-scm.com/docs/git-config) with list option.
-```
+If you want to confirm its parameters, please run [git config](https://git-scm.com/docs/git-config) with list option.
+```bash
 $ git config --list
 ```
 
 #### Set up ssh
-Let's generate private key and public key with `ssh-keygen`.
-```
+Please generate private key and public key with `ssh-keygen`.
+```bash
 $ ssh-keygen -t rsa
 ```
 
@@ -402,7 +381,7 @@ When you execute `ssh-keygen`, it asks you some questions about:
 ##### Enter file in which to save the key(/root/.ssh/id_rsa):
 * Please specify path including filename where you want to save keys.
 If specified directory doesn't exist, ssh-keygen command fails.  
-If you omitted this path and `/root/.ssh` doesn't exist, directory `/root/.ssh` is created and keys are placed there.
+If you omitted this path and `/root/.ssh` doesn't exist, it is created and keys are placed there.
 
 ##### Enter passphrase (empty for o passphrase):  
 * Passphrase is a string of characters, which is longer than usual password (minimum five characters but 20 characters preferably).
@@ -411,9 +390,9 @@ It is used in encryption and decryption of private key.
 ##### Enter same passphrase again:
 * Enter the same passphrase as you typed above.
 
-After generating keys, register public key on GitHub.
+After generating keys, please register public key on GitHub.
 At first, please copy the result of executing command below.
-```
+```bash
 $ cat id_rsa.pub
 ```
 
@@ -428,13 +407,16 @@ And then, please register it on Github with following instructions.
 ###### Click `New SSH key`.
 ![click-new-ssh-key](https://user-images.githubusercontent.com/19743841/51783792-7ee65480-2182-11e9-84b5-11dbfa51ba21.png)
 
-###### Specify Title, paste public key strings into Key and click `Add SSH key`.
+###### Specify Title, paste public key strings into `Key` and click `Add SSH key`.
 ![click-add-ssh-key](https://user-images.githubusercontent.com/19743841/51783858-b3a6db80-2183-11e9-9c56-21055d61c3d3.png)
 
-Finally, run `ssh -T git@github.com`, which attempts to ssh to GitHub.  
-If you are asked to continue connecting, answer *yes*. If you specified passphrase, please type it and press enter. If you didn't create passphrase, it is not required.
-```
+Finally, please run `ssh -T git@github.com`, which attempts to ssh to GitHub.  
+```bash
 root@01cb00143067:~/.ssh# ssh -T git@github.com
+```
+
+If you are asked to continue connecting, answer *yes*. If you specified passphrase, please type it and press enter. If you didn't, it is not required.
+```
 The authenticity of host 'github.com (192.30.255.113)' can't be established.
 RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
 Are you sure you want to continue connecting (yes/no)? yes
@@ -443,7 +425,7 @@ Enter passphrase for key '/root/.ssh/id_rsa':
 Hi resotto! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-Could you confirm the message *"Hi username!"*? Fantastic! From now, you can pull your private repository in this container.
+Could you confirm the message *"Hi username! You've successfully authenticated"*? Fantastic! From now, you can pull your private repository in this container.
 
 It doesn't work? Please check [Testing your SSH connection](https://help.github.com/articles/testing-your-ssh-connection/).
 
@@ -455,10 +437,10 @@ They are installed with pip3 when you run [`docker build`](https://docs.docker.c
 Actually, you already have installed vim and this repository also has `.vimrc` which is copied to *"/root"* in the container. Thus you can use vim by default!
 
 ## Deep Learning
-If you can run learning models on container and show matplotlib figure about the result, it will be very useful.  
+If you can run learning and predicting models on container and show matplotlib figure about the result, it will be very useful.  
 In order to implement this, you need to follow 5 steps below:
 1. Install X11 on your host machine.
-2. Configure settings for X11Forwarding.
+2. Configure ssh settings for X11Forwarding.
 3. Expose 22 port for ssh.
 4. Install Tkinter and start ssh service.
 5. Connect to the container with X11Forwarding.
@@ -467,10 +449,10 @@ In order to implement this, you need to follow 5 steps below:
 By default, if you try to show a figure on a container, you can't. Using X11, you can show it on your host machine, not the container.  
 Please install X11 such as [XQuartz](https://www.xquartz.org/).
 
-### 2. Configure settings for X11Forwarding
+### 2. Configure ssh settings for X11Forwarding
 If you didn't pass through [Set up ssh](#set-up-ssh), please do it first in order to create private key in `~/.ssh/`.  
-After confirming that private key exists in `~/.ssh/`, then you run following command:
-```
+After confirming that private key exists there, then you run following command:
+```bash
 $ echo -e Host deeplearning\\n"    "HostName 0.0.0.0\\n"    "Port 2222\\n"    "User root\\n"    "IdentityFile ~/.ssh/id_rsa\\n"    "ForwardX11Timeout 168h\\n"    "LogLevel DEBUG1\\n >> ~/.ssh/config
 ```
 
@@ -486,7 +468,7 @@ This command adds ssh settings into `~/.ssh/config`.
 ### 3. Expose 22 port for ssh
 Then, expose 22 port of a container so that you can connect to the container with ssh.
 In order to leave the container up after escaping from it, [`docker run`](https://docs.docker.com/engine/reference/commandline/run/) is not used here.  
-```
+```bash
 $ docker create -it --name deeplearning -p 2222:22 resotto/deeplearning:0.0.1
 $ docker start deeplearning
 $ docker exec -it deeplearning /bin/bash
@@ -495,14 +477,14 @@ $ docker exec -it deeplearning /bin/bash
 When you run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/), you can expose port with `p` option, whose format is `${HOST_PORT}:${CONTAINER_PORT}`. When connecting to the container with ssh, you can specify `${IP_ADDRESS}:${HOST_PORT}` showed via [`docker ps`](https://docs.docker.com/engine/reference/commandline/ps/), so that you can connect to the container with ${CONTAINER_PORT}.
 
 ```
-resotto:~$ docker ps -a
+$ docker ps -a
 CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS                   PORTS                     NAMES
 3e1eb691372b        resotto/deeplearning:0.0.1     "/bin/bash"              24 hours ago        Up 24 minutes            0.0.0.0:2222->22/tcp      deeplearning
 ```
 
 **Don't forget to add options `-it` when you run [`docker create`](https://docs.docker.com/engine/reference/commandline/create/)**. This is very important. If you did, the container would still remain exited even if you run [`docker start`](https://docs.docker.com/engine/reference/commandline/start/).
 
-In fact, image `resotto/deeplearning:0.0.1` is already uploaded to [Docker Hub](https://hub.docker.com/signup). This image is different from the one used at [Getting Started](#getting-started), whose name is `resotto/ubuntu-python3:0.0.1`. This image is also built by Dockerfile, which some orders are added to this repository's one.  
+In fact, the image `resotto/deeplearning:0.0.1` is already uploaded to [Docker Hub](https://hub.docker.com/signup). It is different from the one used at [Getting Started](#getting-started), whose name is `resotto/ubuntu-python3:0.0.1`. It is also built by Dockerfile, which some orders are added to this repository's one.  
 Added orders are below:
 ```
 # Deep Learning
@@ -521,19 +503,19 @@ RUN echo X11UseLocalhost no >> /etc/ssh/sshd_config
 Some softwares are installed, and some settings are changed.
 * `xorg` is used for `X11Forwarding` on container.
 * `sshd` is installed via `openssh-server`, so that you can connect to the container with ssh.
-* `chpasswd` is used for changing specific user's password. If you run `echo "${USER}:${PASSWORD}"` and pipe it to `chpasswd`, the password of the user is registered. Here, root user's password is set to `root`.
-* `/etc/ssh/sshd_config` is used for `sshd`. Via redirect, if `PermitRootLogoin yes` is added into sshd_config, you can connect to the container with root user, and if `X11UseLocalhost no` is added into it, forwarding X server should be bound to the wildcard IPAddress.  
-Please remember that container default IPAddress is [`0.0.0.0`](https://docs.docker.com/v17.09/engine/userguide/networking/default_network/binding/), which is wildcard IPAddress. So you can connect to the container with X11Forwarding.
+* `chpasswd` is used for changing specific user's password. If you run `echo "${USER}:${PASSWORD}"` and pipe it to `chpasswd`, the password of the user is registered. Here, the password of root is specified as `root`.
+* `/etc/ssh/sshd_config` is used for `sshd`. Via redirect, if `PermitRootLogoin yes` is added into sshd_config, you can connect to the container with root, and if `X11UseLocalhost no` is added into it, forwarding X server should be bound to the wildcard IPAddress.  
+Please remember that container default IPAddress is [`0.0.0.0`](https://docs.docker.com/v17.09/engine/userguide/networking/default_network/binding/) which is wildcard IPAddress. So you can connect to the container with X11Forwarding.
 
 ### 4. Install Tkinter and start ssh service
 After running [`docker exec`](https://docs.docker.com/engine/reference/commandline/exec/), let's upgrade installed softwares.
-```
+```bash
 $ apt-get update && apt-get upgrade -y
 $ pip3 install -U numpy && pip3 install -U matplotlib && pip3 install -U sklearn && pip3 install -U tensorflow && pip3 install -U keras
 ```
 
 And then, please install [Tkinter](https://docs.python.org/3.7/library/tkinter.html).
-```
+```bash
 $ apt-get install -y python3-tk
 ```
 
@@ -562,7 +544,7 @@ Time zone:
 ```
 
 Then, please start ssh service in order to connect to this container with ssh.
-```
+```bash
 $ service ssh start
 ```
 
@@ -573,15 +555,15 @@ ssh_exchange_identification: Connection closed by remote host
 
 ### 5. Connect to the container with X11Forwarding
 At last, it is time for ssh.  
-First of all, open your ssh-client which is capable of X11Forwarding. Here, let's assume using [XQuartz](https://www.xquartz.org/) terminal.
+First of all, open your ssh-client which is capable of X11Forwarding. Here, please assume using [XQuartz](https://www.xquartz.org/) terminal.
 
-And then, please connect to the container you configured above with ssh.
-```
+And then, please connect to the container with ssh, which you configured above.
+```bash
 $ ssh deeplearning
 ```
 
-You also can connect to the container with ssh explicitly:
-```
+You also can connect to the container explicitly with ssh:
+```bash
 $ ssh -Xv -p 2222 root@0.0.0.0
 ```
 
@@ -589,14 +571,19 @@ $ ssh -Xv -p 2222 root@0.0.0.0
 * `p` option means specifying port where you connect to the remote host.
 
 If you run container from `resotto/deeplearning:0.0.1`, a python3 file, which operates learning and predicting Sine wave with TensorFlow GRU, is included in the container `/app`.  
-So let's try it:
-```
+So you can try it:
+```bash
 $ cd /app/
 $ python3 gru_sin_tensorflow.py
 ```
 
 After learning models, if this kind of figure is displayed, awesome!
-<div align="center"><img width="638" alt="sine_wave_prediction_02" src="https://user-images.githubusercontent.com/19743841/53146520-dcd25480-35e7-11e9-97b2-3ba7afa91575.png"></div>
+<div align="center"><img width="638" alt="sine_wave_prediction_02" src="https://user-images.githubusercontent.com/19743841/53146520-dcd25480-35e7-11e9-97b2-3ba7afa91575.png"></div><br>
+
+In the end, undoubtedly you also can use Data Container with `--volumes-from` like [Getting Started](#getting-started).
+```bash
+$ docker run -it --name deeplearning -p 2222:22 --volumes-from pydata resotto/deeplearning:0.0.1
+```
 
 ## References
 * [Docker Reference documentation](https://docs.docker.com/reference/)
